@@ -1,0 +1,25 @@
+.LeftBar{
+    height: 100%;
+    width: 220px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #ECEDEE;
+    overflow-x: hidden;
+    padding-top: 20px;
+    border: .5px solid #DFE1E2;
+}
+.list{
+    margin-top:70px;
+    list-style-type: none;
+}
+.list li a{
+    text-decoration: none;
+}
+.topcorner{
+    position:absolute;
+    top:55px;
+    right:10px;
+    color: black;
+   }

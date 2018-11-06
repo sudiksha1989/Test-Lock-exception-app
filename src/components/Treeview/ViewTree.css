@@ -1,0 +1,23 @@
+ul {
+  padding-left: 20px;
+  list-style: none;
+}
+
+p {
+  font-weight: 600;
+  color: #541400;
+}
+
+.orgUnitSelect{
+  overflow: auto;
+  display: block;
+  width: 100%;
+  height: 250px !important;
+  background-image: none;
+ }
+
+ .dropdown-content{
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+ }

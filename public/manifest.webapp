@@ -1,0 +1,31 @@
+{
+"version":"3.1",
+"name":"test React App",
+"description":"Reports ",
+"icons":{
+"16":"/img/mortar-16.jpg",
+"48":"/img/mortar-16.jpg","128":"/img/mortar-16.jpg"
+},
+"developer":
+{
+    "url":"http://dhis2.org",
+    "name":"HISP",
+    "company":null,
+    "email":null
+    },
+    "activities":
+    {
+        "dhis":
+    {
+        "href":"http://localhost:8080/dhis",
+        "namespace":null
+        }
+        },
+        "folderName":null,
+        "baseUrl":null,
+        "launchUrl":null,
+        "key":null,
+        "launch_path":"index.html",
+        "installs_allowed_from":null,
+        "default_locale":"en"
+        }
