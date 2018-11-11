@@ -8,16 +8,24 @@ const dataReducer=(state={
         ...state,
         periodType:action.payload,
         lastValue:[...state.lastValue,action.payload],
-        testvalue:this.state.lastValue.filter((x,i) => i != index )
-      };
+        };
       break;
-      case "SUBTRACT":
+      case "DATASETS":
       state={
         ...state,
-        result:action.payload,
+        dataSets:action.payload,
         lastValue:[...state.lastValue,action.payload]
       };
       break;
+      case "DATASETS-OPTIONS":
+      state={
+        ...state,
+        dataSetsOption:action.payload,
+        lastValue:[...state.lastValue,action.payload]
+      };
+      break;
+      case "CLEAR-THINGS":
+        return [];
     }
     return state;
   }

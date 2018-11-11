@@ -1,5 +1,7 @@
 import React from 'react';
 import {Panel}  from 'react-bootstrap'
+import {connect} from 'react-redux';
+import {availDataSetOption,clearData}  from '../actions/dataReducerAction';
 import './style.css'
 
 class AvailDataSets extends React.Component{
@@ -14,18 +16,18 @@ class AvailDataSets extends React.Component{
      }
    }
    componentDidMount(){
-      fetch('../../../api/dataSets.json?fields=id,name,uid,periodType&paging=False')
-      .then(res=>res.json())
-      .then((result)=>{
-        
-        result.dataSets.map((item)=>{
-          this.state.dataSets.push(item)
-        })
-        this.setState({isLoaded:true})
+    fetch('../../../api/dataSets.json?fields=id,name,uid,periodType&paging=False')
+    .then(res=>res.json())
+    .then((result)=>{
+      
+     result.dataSets.map((item)=>{
+        this.state.dataSets.push(item)
       })
+      this.setState({isLoaded:true})
+    })
     }
     componentWillReceiveProps(props){
-      if(props.PeriodType!=null)
+    if(props.PeriodType!=null)
       this.getDataSets(props.PeriodType);
       if(props.AvailDataSets!=null)
       this.state.option.push(props.AvailDataSets[0])
@@ -48,6 +50,7 @@ class AvailDataSets extends React.Component{
 
       
       getDataSets(value){
+        
            var array = [...this.state.option];
            array=[]
            this.setState({option:array})
@@ -56,12 +59,15 @@ class AvailDataSets extends React.Component{
               if(item.periodType==value)
               dataSets.push({name:item.name,id:item.id})
             })
-           this.setState({option:dataSets})  
+            this.props.availDataSetOption(dataSets)
     }
      
     render(){
-       var optionItems=this.state.option.map((arr)=>
+      var optionItems=this.state.option.map((arr)=>
       <option value={arr.id}>{arr.name}</option>)
+    // var optionItems=(this.props.updatedata.dataSetsOption==undefined)?
+    // []:(this.props.updatedata.dataSetsOption.map((arr)=><option value={arr.id}>{arr.name}</option>))
+
       return(
             <Panel>
                 <Panel.Heading >Available DataSets</Panel.Heading>
@@ -73,6 +79,22 @@ class AvailDataSets extends React.Component{
       }
 }
 
-export default AvailDataSets;
+
+
+const mapStateToProps=(state)=>{
+  return {
+      updatedata:state.updatedata,
+     }
+}
+
+const mapDispatchToProps=(dispatch)=>{
+  return {
+    availDataSetOption:(DataSets)=>{
+      dispatch(availDataSetOption(DataSets))
+    },
+    }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(AvailDataSets)
+
 
 

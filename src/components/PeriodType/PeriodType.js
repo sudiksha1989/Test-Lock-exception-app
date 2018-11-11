@@ -20,6 +20,8 @@ componentDidMount(){
   .then(res=>res.json())
   .then((result)=>{
     
+
+    this.props.setPeriodType(result)
     result.periodTypes.map((item)=>{
       this.state.period.push(item.name)
     })
