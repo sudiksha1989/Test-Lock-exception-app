@@ -1,5 +1,7 @@
 const dataReducer=(state={
     periodType:null,
+    dataSets:[],
+    dataSetsOption:[],
     lastValue:[]
   },action)=>{
     switch(action.type){
@@ -10,19 +12,17 @@ const dataReducer=(state={
         lastValue:[...state.lastValue,action.payload],
         };
       break;
-      case "DATASETS":
+      case "GET_POST":
       state={
         ...state,
         dataSets:action.payload,
-        lastValue:[...state.lastValue,action.payload]
-      };
+        };
       break;
       case "DATASETS-OPTIONS":
       state={
         ...state,
         dataSetsOption:action.payload,
-        lastValue:[...state.lastValue,action.payload]
-      };
+       };
       break;
       case "CLEAR-THINGS":
         return [];

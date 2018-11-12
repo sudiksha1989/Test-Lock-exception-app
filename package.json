@@ -6,6 +6,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.0-14",
     "@fortawesome/free-solid-svg-icons": "^5.1.0-11",
     "@fortawesome/react-fontawesome": "^0.1.0-11",
+    "axios": "^0.18.0",
     "bootstrap": "4.1.1",
     "checkbox": "^0.0.1",
     "d2": "^30.0.2",
@@ -27,7 +28,8 @@
     "react-treebeard": "^2.1.0",
     "reactstrap": "^6.3.1",
     "redux": "^4.0.1",
-    "redux-logger": "^3.0.6"
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

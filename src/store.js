@@ -1,19 +1,17 @@
-import {createStore,combineReducers, applyMiddleware} from "redux";
-import dataReducer from './components/reducers/dataReducer'
-import reducer2 from './components/reducers/reducer2'
-import logger from 'redux-logger'
+import {createStore, applyMiddleware,compose} from "redux";
+import rootReducer from '../src/components/reducers/';
+import thunk from "redux-thunk"
 
-export default createStore(
-    combineReducers({
-        updatedata:dataReducer,
-        reducer2
-    }),
-  applyMiddleware(logger)//applymiddleware(urlogger(),otherlogger,....)
-  );//(create-reducer,empty js object overwritten by reducers which have their own initial state,middleware)
+const initialState = {};
 
+const middleware = [thunk];
 
+const store =  createStore(
+     rootReducer,
+     initialState,
+     compose(applyMiddleware(...middleware),
+     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+  );
 
   
-/**for multiple reducer
- * const store =createStore(combineReducers({reducer1,reducer2,....}));
- */
+  export default store;
