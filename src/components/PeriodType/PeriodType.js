@@ -1,46 +1,29 @@
 import React from 'react';
 import {DropdownButton,MenuItem,ButtonToolbar}  from 'react-bootstrap';
 import {connect} from 'react-redux';
-import {setPeriodType}  from '../actions/dataReducerAction';
+import {setPeriodType,getPeriods}  from '../actions/dataReducerAction';
 
 
 class PeriodType extends React.Component{
-constructor(props){
-  super(props)
-  this.state={
-    error:null,
-    isLoaded:false,
-    period:[],
-    button:'Period Type'
-  }
-}
+
 
 componentDidMount(){
-  fetch('../../../api/periodTypes.json')
-  .then(res=>res.json())
-  .then((result)=>{
-    
-
-    this.props.setPeriodType(result)
-    result.periodTypes.map((item)=>{
-      this.state.period.push(item.name)
-    })
-    this.setState({isLoaded:true})
-  })
-
+  this.props.getPeriods()
 }
+
+
 render() {
   
-  if(this.state.isLoaded==true){
-    var  listItems = this.state.period.map((val) =>
-    <MenuItem eventKey={val}>{val}</MenuItem>
+  if(this.props.updatedata.isLoadedPeriod==true){
+    var  listItems = this.props.updatedata.periodType.map((val) =>
+    <MenuItem eventKey={val.name}>{val.name}</MenuItem>
     );
   }
   
   return (
       <ButtonToolbar >
         <DropdownButton onSelect={(value)=>this.props.setPeriodType(value)}
-          title={this.state.button}>
+          title={this.props.updatedata.periodtitle}>
            {listItems}
         </DropdownButton>
      </ButtonToolbar>
@@ -57,7 +40,11 @@ const mapDispatchToProps=(dispatch)=>{
   return {
     setPeriodType:(period)=>{
           dispatch(setPeriodType(period))
-  }}
+  },
+  getPeriods:()=>{
+    dispatch(getPeriods())
+  }
+}
 }
 export default connect(mapStateToProps,mapDispatchToProps)(PeriodType)
 

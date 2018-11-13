@@ -1,35 +1,26 @@
 import React from 'react';
-import { Panel } from 'react-bootstrap'
+import { Panel, Button } from 'react-bootstrap'
 import { connect } from 'react-redux';
-import { getDataSets, availDataSetOption, clearData } from '../actions/dataReducerAction';
+import { getDataSets, availDataSetOption,selectAvailDS } from '../actions/dataReducerAction';
 import './style.css'
 
 class AvailDataSets extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoaded: null,
-      option: [],
-      dataSets: [],
-      event: null
-    }
-  }
-
-
   componentDidMount() {
-    let url = '../../dataSets.json?fields=id,name,uid,periodType&paging=False'
-    this.props.getDataSets(url);
+    this.props.getDataSets();
   }
 
-
-  componentWillReceiveProps(props) {
-    if (props.PeriodType != null)
-      this.showDataSets(props.PeriodType);
-    if (props.AvailDataSets != null)
-      this.state.option.push(props.AvailDataSets[0])
+  handleChange(e){
+    console.log(e.target.value)
+    var options = e.target.options;
+    var value = [];
+    for (var i = 0, l = options.length; i < l; i++) {
+      if (options[i].selected) {
+        value.push(options[i].value);
+      }
+    }
+    this.props.selectAvailDS(value);
   }
-
 
   getContent(event) {
     var array = [...this.state.option];
@@ -45,30 +36,32 @@ class AvailDataSets extends React.Component {
         console.log(this.state.event)
         this.props.callback(this.state.event)
       });
+}
 
-  }
-
-
-  showDataSets(value) {
-    const { getDataSets } = getState();
+  dataSetsOption=(period)=>{
     var dataSets = []
     this.props.updatedata.dataSets.map((item) => {
-      if (item.periodType == value)
+      if (item.periodType == period)
         dataSets.push({ name: item.name, id: item.id })
     })
-    this.props.availDataSetOption(dataSets)
-  }
+
+    var options= dataSets.map(arr=>(<option value={arr.id}>{arr.name}</option>))
+    return options
+    }
+    handleClick(event) {
+      console.log('Your favorite flavor is: ' + this.props.updatedata);
+      console.log("heree")
+    }
+
 
   render() {
-    var optionItems = this.props.updatedata.dataSetsOption.map((arr) =>
-      <option value={arr.id}>{arr.name}</option>)
-    // var optionItems=(this.props.updatedata.dataSetsOption==undefined)?
-    // []:(this.props.updatedata.dataSetsOption.map((arr)=><option value={arr.id}>{arr.name}</option>))
-
+   var optionItems=(this.props.updatedata.periodSelect==null)?[]:this.dataSetsOption(this.props.updatedata.periodSelect)
+   
     return (
       <Panel>
         <Panel.Heading >Available DataSets</Panel.Heading>
-        <select multiple className='form-control' onDoubleClick={this.getContent.bind(this)}>
+        <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this)}>ADD</Button>
+        <select multiple={true} className='form-control' onChange={(event)=>this.handleChange(event)}>
           {optionItems}
         </select>
       </Panel>
@@ -86,11 +79,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getDataSets: (url) => {
-      dispatch(getDataSets(url))
+    getDataSets: () => {
+      dispatch(getDataSets())
     },
     availDataSetOption:(dataSet)=>{
       dispatch(availDataSetOption(dataSet))
+    },
+    selectAvailDS:(selAvailDS)=>{
+      dispatch(selectAvailDS(selAvailDS))
     }
   }
 }

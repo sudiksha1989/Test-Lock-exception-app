@@ -6,6 +6,10 @@ option {
     padding: 3px 2px;
     border-bottom: .5px solid #C0C0C0;
   }
+
+  .button{
+    float: right;
+  }
   
   .form-control {
     display: block;

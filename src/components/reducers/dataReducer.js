@@ -1,31 +1,51 @@
-const dataReducer=(state={
-    periodType:null,
-    dataSets:[],
-    dataSetsOption:[],
-    lastValue:[]
-  },action)=>{
+const initialstate={
+  periodType:null,
+  dataSets:[],
+  availdataSetsOption:[],
+  isLoadedAvailDS:false,
+  lastValue:[],
+  selAvaildataSets:[],
+  periodSelect:null,
+  periodtitle:null,
+  isLoadedPeriod:false
+}
+
+const dataReducer=(state=initialstate,action)=>{
     switch(action.type){
       case "PERIOD-TYPE":
       state={
         ...state,
-        periodType:action.payload,
+        periodSelect:action.payload,
         lastValue:[...state.lastValue,action.payload],
         };
       break;
-      case "GET_POST":
+      case "GET_PERIODS":
+      state={
+        ...state,
+        periodType:action.payload,
+        isLoadedPeriod:true,
+        periodtitle:"Select PeriodType"
+       }
+      case "GET_DATASETS":
       state={
         ...state,
         dataSets:action.payload,
         };
       break;
-      case "DATASETS-OPTIONS":
+      case "AVAILDATASETS-OPTIONS":
       state={
         ...state,
-        dataSetsOption:action.payload,
+        availdataSetsOption:action.payload,
+        isLoadedAvailDS:true,
        };
       break;
-      case "CLEAR-THINGS":
-        return [];
+      case "SEL-AVAILDATASETS-OPTIONS":
+      state={
+        ...state,
+        selAvaildataSets:action.payload,
+        isLoadedAvailDS:true,
+       };
+       break;
     }
     return state;
   }

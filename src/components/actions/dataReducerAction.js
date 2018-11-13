@@ -11,28 +11,53 @@ export function setPeriodType(period){
 
 export function availDataSetOption(DataSets){
     return{
-        type:"DATASETS-OPTIONS",
+        type:"AVAILDATASETS-OPTIONS",
         payload:DataSets
     }
 }
 
+export function selectAvailDS(selDataSets){
+    return{
+        type:"SEL-AVAILDATASETS-OPTIONS",
+        payload:selDataSets
+    }
+}
+
 //get post
-export const getDataSets = (url) => dispatch => {
+export const getDataSets = () => dispatch => {
     axios
-      .get(url)
+      .get('../../dataSets.json?fields=id,name,uid,periodType&paging=False')
       .then(res =>
         dispatch({
-          type: "GET_POST",
+          type: "GET_DATASETS",
           payload:res.data.dataSets
         })
       )
       .catch(err =>
         dispatch({
-          type: "GET_POST",
+          type: "GET_DATASETS",
           payload: null
         })
       );
   };
+
+  //get post
+export const getPeriods=()=>dispatch=>{
+    axios
+    .get('../../periodTypes.json')
+    .then(res=>
+        dispatch({
+            type:'GET_PERIODS',
+            payload:res.data.periodTypes
+        }))
+        .catch(err=>
+            dispatch({
+                type:'GET_PERIODS',
+                payload:null
+            }))
+}
+
+
 // export function getDataSets(url){
 //     return dispatch=>{
 //         fetch(url)
@@ -51,9 +76,3 @@ export const getDataSets = (url) => dispatch => {
 //     }
     
 // }
-
-export function clearData(){
-    return{
-        type:"CLEAR-THINGS",
-    }
-}
