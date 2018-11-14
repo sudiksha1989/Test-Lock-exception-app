@@ -42,7 +42,9 @@ const dataReducer=(state=initialstate,action)=>{
       case "SEL-AVAILDATASETS-OPTIONS":
       state={
         ...state,
-        selAvaildataSets:action.payload,
+        allAvaildataSets:action.payload.allOptions,
+        selectedAvailDSOption:action.payload.selectedOption,
+        unselectedAvailDSOption:action.payload.unselectedOption,
         isLoadedAvailDS:true,
        };
        break;

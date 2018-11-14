@@ -16,10 +16,15 @@ export function availDataSetOption(DataSets){
     }
 }
 
-export function selectAvailDS(selDataSets){
+export function selectAvailDS(allOptions,selectedOption,unselectedOption){
     return{
         type:"SEL-AVAILDATASETS-OPTIONS",
-        payload:selDataSets
+        payload:{
+            allOptions:allOptions,
+            selectedOption:selectedOption,
+            unselectedOption:unselectedOption
+        },
+
     }
 }
 

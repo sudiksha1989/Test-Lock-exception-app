@@ -4,22 +4,31 @@ import { connect } from 'react-redux';
 import { getDataSets, availDataSetOption,selectAvailDS } from '../actions/dataReducerAction';
 import './style.css'
 
+
+let periodTypeVal=null
 class AvailDataSets extends React.Component {
 
+  constructor(props){
+    super(props);
+    this.state={
+      isloadedAvaildataSets:false,
+      isdatasetloaded:false,
+      periodTypeVal:null
+    }
+  }
   componentDidMount() {
     this.props.getDataSets();
   }
 
   handleChange(e){
-    console.log(e.target.value)
+    this.setState({periodTypeVal:null})
     var options = e.target.options;
-    var value = [];
+    var allAvailOptions=[],selectedOption=[],unselectedOption=[];
     for (var i = 0, l = options.length; i < l; i++) {
-      if (options[i].selected) {
-        value.push(options[i].value);
+       (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
+       allAvailOptions.push({id:options[i].value,name:options[i].label})
       }
-    }
-    this.props.selectAvailDS(value);
+    this.props.selectAvailDS(allAvailOptions,selectedOption,unselectedOption);
   }
 
   getContent(event) {
@@ -37,26 +46,42 @@ class AvailDataSets extends React.Component {
         this.props.callback(this.state.event)
       });
 }
+   static getDerivedStateFromProps(nextProps, prevState){
+      if(nextProps.Period!==prevState.periodTypeVal){
+        return { periodTypeVal: nextProps.Period};
+      }
+      else return null;
+        }
 
-  dataSetsOption=(period)=>{
-    var dataSets = []
-    this.props.updatedata.dataSets.map((item) => {
-      if (item.periodType == period)
-        dataSets.push({ name: item.name, id: item.id })
-    })
-
-    var options= dataSets.map(arr=>(<option value={arr.id}>{arr.name}</option>))
-    return options
+    componentDidUpdate(prevProps) {
+      if(prevProps.Period!==this.props.Period){
+        this.setState({periodTypeVal: this.props.Period});
+        }
     }
-    handleClick(event) {
-      console.log('Your favorite flavor is: ' + this.props.updatedata);
-      console.log("heree")
-    }
+    
+ 
+  dataSetsOption=()=>{
+    return (this.props.updatedata.dataSets.map((item) => 
+      (item.periodType == this.state.periodTypeVal)?
+              (<option value={item.id}>{item.name}</option>):false
+          ))         
+     }
+    selectedDataSetsOption=()=>{
+      this.setState({isloadedAvaildataSets:false})
+      return (this.props.updatedata.unselectedAvailDSOption.map((item) => 
+              <option value={item.id}>{item.name}</option>))
+      }
+    handleClick() {
+      this.setState({isloadedAvaildataSets:true})
+      }
 
 
   render() {
-   var optionItems=(this.props.updatedata.periodSelect==null)?[]:this.dataSetsOption(this.props.updatedata.periodSelect)
-   
+    let optionItems=(this.state.periodTypeVal!=null)?
+                    (this.dataSetsOption())
+                    :(this.state.isloadedAvaildataSets==true)?
+                    this.selectedDataSetsOption():[]
+                    
     return (
       <Panel>
         <Panel.Heading >Available DataSets</Panel.Heading>
@@ -66,6 +91,7 @@ class AvailDataSets extends React.Component {
         </select>
       </Panel>
     )
+    
   }
 }
 
@@ -85,8 +111,8 @@ const mapDispatchToProps = (dispatch) => {
     availDataSetOption:(dataSet)=>{
       dispatch(availDataSetOption(dataSet))
     },
-    selectAvailDS:(selAvailDS)=>{
-      dispatch(selectAvailDS(selAvailDS))
+    selectAvailDS:(allOptions,selectedOption,unselectedOption)=>{
+      dispatch(selectAvailDS(allOptions,selectedOption,unselectedOption))
     }
   }
 }
