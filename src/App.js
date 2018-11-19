@@ -18,8 +18,7 @@ class App extends Component{
              <table>
              <tr><th><PeriodType/></th></tr>
              <tr>
-                 <th ><AvailDataSets   Period={this.props.updatedata.periodSelect}/></th>
-                 <th ><SelectedDataSets   Period={this.props.updatedata.periodSelect} /></th>
+                <th><AvailDataSets   Period={this.props.updatedata.periodSelect}/></th>
              </tr>
              <tr>
                  <th><ViewTree/></th>

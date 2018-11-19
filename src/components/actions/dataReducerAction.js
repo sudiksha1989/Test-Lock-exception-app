@@ -9,20 +9,23 @@ export function setPeriodType(period){
     }
 }
 
-export function availDataSetOption(DataSets){
+export function availDataSetOption(seldataSets,unseldataSets){
     return{
         type:"AVAILDATASETS-OPTIONS",
-        payload:DataSets
+        payload:{
+            seldataSets:seldataSets,
+            unseldataSets:unseldataSets
+        }
     }
 }
 
-export function selectAvailDS(allOptions,selectedOption,unselectedOption){
+export function selectAvailDS(selectedOption,unselectedOption,dataSetsOption){
     return{
         type:"SEL-AVAILDATASETS-OPTIONS",
         payload:{
-            allOptions:allOptions,
             selectedOption:selectedOption,
-            unselectedOption:unselectedOption
+            unselectedOption:unselectedOption,
+            dataSetsOption:dataSetsOption
         },
 
     }

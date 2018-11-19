@@ -1,5 +1,6 @@
 import React from 'react';
 import {Panel}  from 'react-bootstrap'
+import { connect } from 'react-redux';
 import './style.css'
 
 class SelectedDataSets extends React.Component{
@@ -39,9 +40,6 @@ class SelectedDataSets extends React.Component{
 
    
       render(){
-       // if(this.props.SelectedDataSets!=null)
-       // this.state.option.push(this.props.SelectedDataSets)
-        
          var optionItems= this.state.option.map((arr)=>
          <option value={arr.id}>{arr.name}</option>)         
          
@@ -56,4 +54,17 @@ class SelectedDataSets extends React.Component{
       }
 }
 
-export default SelectedDataSets;
+const mapStateToProps = (state) => {
+    return {
+      updatedata: state.updatedata,
+    }
+  }
+  
+  const mapDispatchToProps = (dispatch) => {
+    return {
+     
+    }
+  }
+  export default connect(mapStateToProps, mapDispatchToProps)(SelectedDataSets)
+  
+  

@@ -11,84 +11,108 @@ class AvailDataSets extends React.Component {
   constructor(props){
     super(props);
     this.state={
-      isloadedAvaildataSets:false,
+      isloadedAvailDSAdd:false,
+      isloadedAvailDSRemove:false,
+      isdatasetloaded:false,
+      periodTypeVal:null
       }
   }
   componentDidMount() {
     this.props.getDataSets();
   }
 
-  handleChange(e){
+  componentWillReceiveProps(props) {
+    if(props.Period!==this.state.periodTypeVal)
+    this.setState({periodTypeVal:props.Period,isdatasetloaded:false})
+
+  }
+  handleChange(e,param){
     var options = e.target.options;
     var allAvailOptions=[],selectedOption=[],unselectedOption=[];
-    for (var i = 0, l = options.length; i < l; i++) {
-       (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
-       allAvailOptions.push({id:options[i].value,name:options[i].label})
-      }
-    this.props.selectAvailDS(allAvailOptions,selectedOption,unselectedOption);
+    if(param=='ADD')  {
+      for (var i = 0, l = options.length; i < l; i++) {
+        (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
+       }
+     this.props.selectAvailDS(selectedOption,unselectedOption,[]);
+    }
+    if(param=='REMOVE')  {
+      for (var i = 0, l = options.length; i < l; i++) {
+        (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
+        allAvailOptions.push({id:options[i].value,name:options[i].label})
+       }
+     this.props.selectAvailDS([],selectedOption,unselectedOption);
+    }
+    
   }
   
-  getContent(event) {
-    var array = [...this.state.option];
-    var eventval = []
-    array.forEach((val, index) => {
-      if (event.target.value === val.id) {
-        eventval.push(val)
-        array.splice(index, 1);
-      }
-    })
-    this.setState({ option: array, event: eventval },
-      function () {
-        console.log(this.state.event)
-        this.props.callback(this.state.event)
-      });
-}
-
-  dataSetsOption=(periodTypeVal,isdatasetloaded)=>{
-    isdatasetloaded=false
-   return  (this.props.updatedata.dataSets.map((item) => 
+  dataSetsOption=(periodTypeVal)=>{
+    this.setState({isdatasetloaded:true})
+    var dataSet=(this.props.updatedata.dataSets.map((item) => 
         (item.periodType == periodTypeVal)?
                 (<option value={item.id}>{item.name}</option>):false
             ))
-  }
+    this.props.availDataSetOption(dataSet,[])
+}
   
   availDSOptions=()=>{
-    var dataSets;
-
-
-    var array = [...this.state.option];
-    var eventval = []
-    array.forEach((val, index) => {
-      if (event.target.value === val.id) {
-        eventval.push(val)
-        array.splice(index, 1);
-      }
-    })
-      dataSets=(this.props.updatedata.unselectedAvailDSOption.map((item) => 
-            <option value={item.id}>{item.name}</option>))
-     return dataSets
+    var unseldataSets,seldataSets=[],data=this.props.updatedata.selectedAvailDSOption
+    unseldataSets=this.props.updatedata.unselectedAvailDSOption.map((item) => 
+              <option value={item.id}>{item.name}</option>)
+    data.forEach(function(dataset) {
+      dataset.forEach(function(item){
+        seldataSets.push(<option value={item.id}>{item.name}</option>)
+      })
+    });
+    this.props.availDataSetOption(unseldataSets,seldataSets)
+    this.setState({isloadedAvailDSAdd:false})
     }
     
-    handleClick() {
-     this.setState({isloadedAvaildataSets:true})
+    removeavailDSOptions=()=>{
+      var seldataSets,notseldataSets
+    seldataSets=(this.props.updatedata.dataSetsOption.map((item) => 
+            <option value={item.id}>{item.name}</option>))
+    notseldataSets=(this.props.updatedata.unselectedAvailDSOption.map((item) => 
+    <option value={item.id}>{item.name}</option>))
+
+     this.props.availDataSetOption(notseldataSets,seldataSets)
+     this.setState({isloadedAvailDSRemove:false})
+    }
+    
+    handleClick(param) {
+      if(param=='ADD')
+      this.setState({isloadedAvailDSAdd:true})
+      if(param=='REMOVE')
+      this.setState({isloadedAvailDSRemove:true})
     }
 
 
   render() {
-    var optionItems;
-     if(this.props.Period!=null && isdatasetloaded==false)
-     optionItems=this.dataSetsOption(this.props.Period,isdatasetloaded)
-     if(this.state.isloadedAvaildataSets==true)
-     optionItems=this.availDSOptions()
+    if(this.props.Period!=null && this.state.isdatasetloaded==false)
+     this.dataSetsOption(this.props.Period)
+    if(this.state.isloadedAvailDSAdd==true)
+      this.availDSOptions()
+    if(this.state.isloadedAvailDSRemove==true)
+      this.removeavailDSOptions()
+     
                     
     return (
-      <Panel>
+      <div>
+      <Panel className="leftPanel">
         <Panel.Heading >Available DataSets</Panel.Heading>
-        <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this)}>ADD</Button>
-        <select multiple={true} className='form-control' onChange={(event)=>this.handleChange(event)}>
-          {optionItems}
+        <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this,'ADD')}>ADD</Button>
+        <select multiple={true} className='form-control' onChange={(event)=>this.handleChange(event,'ADD')}>
+          {this.props.updatedata.availdataSetsOption}
         </select>
       </Panel>
+
+      <Panel className="rightPanel">
+        <Panel.Heading >Selected DataSets</Panel.Heading>
+        <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this,'REMOVE')}>REMOVE</Button>
+              <select multiple className='form-control' onChange={(event)=>this.handleChange(event,'REMOVE')}>
+                  {this.props.updatedata.selavaildataSetsOption}
+              </select>
+        </Panel>
+</div>
     )
     
   }
@@ -107,11 +131,11 @@ const mapDispatchToProps = (dispatch) => {
     getDataSets: () => {
       dispatch(getDataSets())
     },
-    availDataSetOption:(dataSet)=>{
-      dispatch(availDataSetOption(dataSet))
+    availDataSetOption:(seldataSets,unseldataSets)=>{
+      dispatch(availDataSetOption(seldataSets,unseldataSets))
     },
-    selectAvailDS:(allOptions,selectedOption,unselectedOption)=>{
-      dispatch(selectAvailDS(allOptions,selectedOption,unselectedOption))
+    selectAvailDS:(selectedOption,unselectedOption,dataSetsOption)=>{
+      dispatch(selectAvailDS(selectedOption,unselectedOption,dataSetsOption))
     }
   }
 }

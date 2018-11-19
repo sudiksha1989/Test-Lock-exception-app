@@ -7,7 +7,13 @@ const initialstate={
   selAvaildataSets:[],
   periodSelect:null,
   periodtitle:null,
-  isLoadedPeriod:false
+  isLoadedPeriod:false,
+  allAvaildataSets:[],
+  selectedAvailDSOption:[],
+  unselectedAvailDSOption:[],
+  dataSetsOption:[]
+
+
 }
 
 const dataReducer=(state=initialstate,action)=>{
@@ -35,18 +41,18 @@ const dataReducer=(state=initialstate,action)=>{
       case "AVAILDATASETS-OPTIONS":
       state={
         ...state,
-        availdataSetsOption:action.payload,
+        availdataSetsOption:action.payload.seldataSets,
+        selavaildataSetsOption:action.payload.unseldataSets,
         isLoadedAvailDS:true,
        };
       break;
       case "SEL-AVAILDATASETS-OPTIONS":
       state={
         ...state,
-        allAvaildataSets:action.payload.allOptions,
-        selectedAvailDSOption:action.payload.selectedOption,
-        unselectedAvailDSOption:action.payload.unselectedOption,
-        isLoadedAvailDS:true,
-       };
+        selectedAvailDSOption:[...state.selectedAvailDSOption,action.payload.selectedOption],
+        unselectedAvailDSOption:[...state.unselectedAvailDSOption,...action.payload.unselectedOption],
+        dataSetsOption:[...state.dataSetsOption,...action.payload.dataSetsOption],
+        };
        break;
     }
     return state;

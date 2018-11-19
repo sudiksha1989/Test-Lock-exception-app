@@ -11,6 +11,15 @@ option {
     float: right;
   }
   
+
+  .rightPanel{
+    float:right;
+    width: 50%
+  }
+  .leftPanel{
+    float:left;
+    width: 50%
+  }
   .form-control {
     display: block;
     width: 100%;
