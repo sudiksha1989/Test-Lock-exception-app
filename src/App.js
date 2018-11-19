@@ -1,11 +1,9 @@
 import React,{Component} from 'react';
 import './App.css'
 import {connect} from 'react-redux'
-import PeriodType from './components/PeriodType/PeriodType';
-import AvailPeriods from './components/Periods/AvailPeriods'
-import SelectedPeriod from './components/Periods/SelectedPeriod'
-import AvailDataSets from './components/DataSets/AvailDataSets'
-import SelectedDataSets from './components/DataSets/SelectedDataSets'
+import PeriodType from './components/PeriodType';
+import AvailablePeriods from './components/AvailablePeriods'
+import AvailableDataSets from './components/AvailableDataSets'
 import ViewTree from './components/Treeview/ViewTree'
 
 
@@ -17,12 +15,9 @@ class App extends Component{
              <div className='LockException-display'>
              <table>
              <tr><th><PeriodType/></th></tr>
-             <tr>
-                <th><AvailDataSets   Period={this.props.updatedata.periodSelect}/></th>
-             </tr>
-             <tr>
-                 <th><ViewTree/></th>
-             </tr>
+             <tr><th><AvailablePeriods   Period={this.props.updatedata.periodSelect}/></th></tr>
+             <tr><th><AvailableDataSets  Period={this.props.updatedata.periodSelect}/></th></tr>
+             <tr> <th><ViewTree/></th></tr>
              </table>
              </div>
              
