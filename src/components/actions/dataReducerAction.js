@@ -1,11 +1,43 @@
 import { resolve } from "url";
 import { rejects } from "assert";
-import axios from "axios"
+import axios from "axios";
+
 
 export function setPeriodType(period){
     return{
         type:"PERIOD-TYPE",
         payload:period
+    }
+}
+
+export function setAvailPeriodVal(availPeriodVal){
+    return{
+        type:"AVAILPERIODVAL",
+        payload:{
+            availPeriodVal:availPeriodVal,
+           }
+    }
+}
+
+export function availPeriodOption(selPeriods,unselPeriods){
+    return{
+        type:"AVAILPERIOD-OPTIONS",
+        payload:{
+            availPeriodOption:selPeriods,
+            selAvailPeriodOption:unselPeriods
+        }
+    }
+}
+
+export function selectAvailPeriod(selectedOption,unselectedOption,dataSetsOption){
+    return{
+        type:"SEL-AVAILPERIOD-OPTIONS",
+        payload:{
+            selectedAvailPeriodOption:selectedOption,
+            notselAvailPeriodOption:unselectedOption,
+            PeriodOption:dataSetsOption
+        },
+
     }
 }
 

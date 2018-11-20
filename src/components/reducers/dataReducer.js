@@ -11,9 +11,13 @@ const initialstate={
   allAvaildataSets:[],
   selectedAvailDSOption:[],
   unselectedAvailDSOption:[],
-  dataSetsOption:[]
-
-
+  dataSetsOption:[],
+  availPeriodVal:null,
+  availPeriodOption:[],
+  selAvailPeriodOption:[],
+  selectedAvailPeriodOption:[],
+  notselAvailPeriodOption:[],
+  PeriodOption:[]
 }
 
 const dataReducer=(state=initialstate,action)=>{
@@ -32,6 +36,29 @@ const dataReducer=(state=initialstate,action)=>{
         isLoadedPeriod:true,
         periodtitle:"Select PeriodType"
        }
+       break;
+       case "AVAILPERIODVAL":
+        state={
+          ...state,
+          availPeriodVal:action.payload,
+          };
+        break;
+      case "AVAILPERIOD-OPTIONS":
+      state={
+        ...state,
+        availPeriodOption:action.payload.availPeriodOption,
+        selAvailPeriodOption:action.payload.selAvailPeriodOption,
+        isLoadedAvailDS:true,
+       };
+      break;
+      case "SEL-AVAILPERIOD-OPTIONS":
+      state={
+        ...state,
+        selectedAvailPeriodOption:[...state.selectedAvailPeriodOption,action.payload.selectedAvailPeriodOption],
+        notselAvailPeriodOption:[...state.notselAvailPeriodOption,...action.payload.notselAvailPeriodOption],
+        PeriodOption:[...state.PeriodOption,...action.payload.PeriodOption],
+        };
+       break;
       case "GET_DATASETS":
       state={
         ...state,
