@@ -29,13 +29,13 @@ export function availPeriodOption(selPeriods,unselPeriods){
     }
 }
 
-export function selectAvailPeriod(selectedOption,unselectedOption,dataSetsOption){
+export function selectAvailPeriod(selectedOption,unselectedOption,isperiodloaded){
     return{
         type:"SEL-AVAILPERIOD-OPTIONS",
         payload:{
             selectedAvailPeriodOption:selectedOption,
             notselAvailPeriodOption:unselectedOption,
-            PeriodOption:dataSetsOption
+            isperiodloaded:isperiodloaded
         },
 
     }
@@ -51,13 +51,13 @@ export function availDataSetOption(seldataSets,unseldataSets){
     }
 }
 
-export function selectAvailDS(selectedOption,unselectedOption,dataSetsOption){
+export function selectAvailDS(selectedOption,unselectedOption,isdatasetloaded){
     return{
         type:"SEL-AVAILDATASETS-OPTIONS",
         payload:{
             selectedOption:selectedOption,
             unselectedOption:unselectedOption,
-            dataSetsOption:dataSetsOption
+            isdatasetloaded:isdatasetloaded
         },
 
     }

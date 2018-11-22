@@ -14,6 +14,8 @@ class AvailablePeriods extends React.Component{
       isloadedAvailPeriodRemove:false,
       isPeriodloaded:false,
       availPeriodVal:null,
+      selectedOption:[],
+      unselectedOption:[],
       month:['January','February','March','April','May','June','July','August','September','October','November','December']
      }
   }
@@ -29,14 +31,14 @@ class AvailablePeriods extends React.Component{
       for (var i = 0, l = options.length; i < l; i++) {
         (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
        }
-     this.props.selectAvailPeriod(selectedOption,unselectedOption,[]);
-    }
+       this.setState({selectedOption:selectedOption,unselectedOption:unselectedOption});
+     }
     if(param=='REMOVE')  {
       for (var i = 0, l = options.length; i < l; i++) {
         (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
         allAvailOptions.push({id:options[i].value,name:options[i].label})
        }
-     this.props.selectAvailPeriod([],selectedOption,unselectedOption);
+       this.setState({selectedOption:selectedOption,unselectedOption:unselectedOption});
     }
     
   }
@@ -61,34 +63,37 @@ class AvailablePeriods extends React.Component{
 }
   
   addAvailPeriodOptions=()=>{
-    var unseldataSets,seldataSets=[],data=this.props.updatedata.selectedAvailPeriodOption
+    var unseldataSets,seldataSets=[]
     unseldataSets=this.props.updatedata.notselAvailPeriodOption.map((item) => 
               <option value={item.id}>{item.name}</option>)
-    data.forEach(function(dataset) {
-      dataset.forEach(function(item){
-        seldataSets.push(<option value={item.id}>{item.name}</option>)
-      })
-    });
+    seldataSets=this.props.updatedata.selectedAvailPeriodOption.map((item) => 
+        <option value={item.id}>{item.name}</option>)
     this.props.availPeriodOption(unseldataSets,seldataSets)
     this.setState({isloadedAvailPeriodAdd:false})
     }
     
     removeAvailPeriodOptions=()=>{
     var seldataSets,notseldataSets
-    seldataSets=(this.props.updatedata.PeriodOption.map((item) => 
+    seldataSets=(this.props.updatedata.notselAvailPeriodOption.map((item) => 
             <option value={item.id}>{item.name}</option>))
-    notseldataSets=(this.props.updatedata.notselAvailPeriodOption.map((item) => 
-    <option value={item.id}>{item.name}</option>))
+    notseldataSets=(this.props.updatedata.selectedAvailPeriodOption.map((item) => 
+            <option value={item.id}>{item.name}</option>))
 
-     this.props.availPeriodOption(notseldataSets,seldataSets)
+     this.props.availPeriodOption(seldataSets,notseldataSets)
      this.setState({isloadedAvailPeriodRemove:false})
     }
     
     handleClick(param) {
-      if(param=='ADD')
-      this.setState({isloadedAvailPeriodAdd:true})
-      if(param=='REMOVE')
-      this.setState({isloadedAvailPeriodRemove:true})
+      if(param=='ADD'){
+        this.setState({isloadedAvailPeriodAdd:true})
+        this.props.selectAvailPeriod(this.state.selectedOption,this.state.unselectedOption,false);
+      }
+      
+      if(param=='REMOVE'){
+        this.setState({isloadedAvailPeriodRemove:true})
+        this.props.selectAvailPeriod(this.state.selectedOption,this.state.unselectedOption,true);
+      }
+      
     }
 
         
@@ -142,8 +147,8 @@ class AvailablePeriods extends React.Component{
           setAvailPeriodVal:(availPeriodVal)=>{
           dispatch(setAvailPeriodVal(availPeriodVal))
           },
-          selectAvailPeriod:(selectedOption,unselectedOption,dataSetsOption)=>{
-          dispatch(selectAvailPeriod(selectedOption,unselectedOption,dataSetsOption))
+          selectAvailPeriod:(selectedOption,unselectedOption,isperiodloaded)=>{
+          dispatch(selectAvailPeriod(selectedOption,unselectedOption,isperiodloaded))
       }
     }
   }

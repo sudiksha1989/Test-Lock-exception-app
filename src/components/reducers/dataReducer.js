@@ -17,8 +17,8 @@ const initialstate={
   selAvailPeriodOption:[],
   selectedAvailPeriodOption:[],
   notselAvailPeriodOption:[],
-  PeriodOption:[]
-}
+  PeriodOption:[],
+  }
 
 const dataReducer=(state=initialstate,action)=>{
     switch(action.type){
@@ -52,12 +52,19 @@ const dataReducer=(state=initialstate,action)=>{
        };
       break;
       case "SEL-AVAILPERIOD-OPTIONS":
-      state={
-        ...state,
-        selectedAvailPeriodOption:[...state.selectedAvailPeriodOption,action.payload.selectedAvailPeriodOption],
-        notselAvailPeriodOption:[...state.notselAvailPeriodOption,...action.payload.notselAvailPeriodOption],
-        PeriodOption:[...state.PeriodOption,...action.payload.PeriodOption],
-        };
+      if(action.payload.isperiodloaded==false){
+          state={
+            ...state,
+            selectedAvailPeriodOption:[...state.selectedAvailPeriodOption,...action.payload.selectedAvailPeriodOption],
+            notselAvailPeriodOption:action.payload.notselAvailPeriodOption,
+            };}
+        else{
+          state={
+            ...state,
+            selectedAvailPeriodOption:action.payload.selectedAvailPeriodOption,
+            notselAvailPeriodOption:[...state.notselAvailPeriodOption,...action.payload.notselAvailPeriodOption],
+            };
+        }
        break;
       case "GET_DATASETS":
       state={
@@ -74,12 +81,25 @@ const dataReducer=(state=initialstate,action)=>{
        };
       break;
       case "SEL-AVAILDATASETS-OPTIONS":
-      state={
-        ...state,
-        selectedAvailDSOption:[...state.selectedAvailDSOption,action.payload.selectedOption],
-        unselectedAvailDSOption:[...state.unselectedAvailDSOption,...action.payload.unselectedOption],
-        dataSetsOption:[...state.dataSetsOption,...action.payload.dataSetsOption],
-        };
+        if(action.payload.isdatasetloaded==false)
+        {
+          state={
+            ...state,
+            selectedAvailDSOption:[...state.selectedAvailDSOption,...action.payload.selectedOption],
+            unselectedAvailDSOption:action.payload.unselectedOption,
+            };
+        }
+        
+        else{
+          state={
+            ...state,
+            selectedAvailDSOption:action.payload.selectedOption,
+            unselectedAvailDSOption:[...state.unselectedAvailDSOption,...action.payload.unselectedOption],
+            };
+  
+        }
+        
+        
        break;
     }
     return state;
