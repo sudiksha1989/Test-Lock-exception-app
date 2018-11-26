@@ -1,50 +1,61 @@
 import React from 'react';
-import {DropdownButton,MenuItem,ButtonToolbar}  from 'react-bootstrap';
-import {connect} from 'react-redux';
-import {setPeriodType,getPeriods}  from '../actions/dataReducerAction';
+import { connect } from 'react-redux';
+import { setPeriodType, getPeriods } from '../actions/dataReducerAction';
+import FontAwesome from 'react-fontawesome'
 
 
-class PeriodType extends React.Component{
+
+class PeriodType extends React.Component {
+  componentDidMount() {
+    this.props.getPeriods()
+  }
+  handleClick=(e)=>{
+    this.props.setPeriodType(e.target.textContent)
+  }
 
 
-componentDidMount(){
-  this.props.getPeriods()
-}
+  render() {
 
-
-render() {
-  
-  if(this.props.updatedata.isLoadedPeriod==true){
-    var  listItems = this.props.updatedata.periodType.map((val) =>
-    <MenuItem eventKey={val.name}>{val.name}</MenuItem>
+    if (this.props.updatedata.isLoadedPeriod == true) {
+      var listItems = this.props.updatedata.periodType.map((val) => <li><a >{val.name}</a></li>
+      );
+    }
+    //   <ButtonToolbar >
+    //   <DropdownButton onSelect={(value) => this.props.setPeriodType(value)}
+    //     title={this.props.updatedata.periodtitle}>
+    //     {listItems}
+    //   </DropdownButton>
+    // </ButtonToolbar>
+    return (
+      <nav>
+        <ul>
+          <li className="sub-menu-parent" tab-index="0">
+            <a >Select PeriodType<div className="arrow-icon"><FontAwesome  name='caret-down' /></div></a>
+            <ul className="sub-menu" onClick={event=>this.handleClick(event)}>
+                {listItems}
+            </ul>
+          </li>
+          </ul>
+      </nav>
     );
   }
-  
-  return (
-      <ButtonToolbar >
-        <DropdownButton onSelect={(value)=>this.props.setPeriodType(value)}
-          title={this.props.updatedata.periodtitle}>
-           {listItems}
-        </DropdownButton>
-     </ButtonToolbar>
-   );
-}}
-
-const mapStateToProps=(state)=>{
-  return {
-      updatedata:state.updatedata,
-     }
 }
 
-const mapDispatchToProps=(dispatch)=>{
+const mapStateToProps = (state) => {
   return {
-    setPeriodType:(period)=>{
-          dispatch(setPeriodType(period))
-  },
-  getPeriods:()=>{
-    dispatch(getPeriods())
+    updatedata: state.updatedata,
   }
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setPeriodType: (period) => {
+      dispatch(setPeriodType(period))
+    },
+    getPeriods: () => {
+      dispatch(getPeriods())
+    }
+  }
 }
-export default connect(mapStateToProps,mapDispatchToProps)(PeriodType)
+export default connect(mapStateToProps, mapDispatchToProps)(PeriodType)
 

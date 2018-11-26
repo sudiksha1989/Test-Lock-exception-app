@@ -2,7 +2,7 @@ import React from 'react';
 import { Panel, Button } from 'react-bootstrap'
 import { connect } from 'react-redux';
 import { getDataSets, availDataSetOption,selectAvailDS } from '../actions/dataReducerAction';
-import './style.css'
+
 
 class AvailableDataSets extends React.Component {
 
@@ -15,6 +15,8 @@ class AvailableDataSets extends React.Component {
       periodTypeVal:null,
       selectedOption:[],
       unselectedOption:[],
+      yes:null,
+      mo:null
       
       }
   }
@@ -25,56 +27,46 @@ class AvailableDataSets extends React.Component {
   componentWillReceiveProps(props) {
     if(props.Period!==this.state.periodTypeVal)
     this.setState({periodTypeVal:props.Period,isdatasetloaded:false})
-
   }
-  handleChange(e,param){
+  
+  handleChange(e){
     var options = e.target.options;
-    var allAvailOptions=[],selectedOption=[],unselectedOption=[];
-    if(param=='ADD')  {
+    var selectedOption=[],unselectedOption=[];
       for (var i = 0, l = options.length; i < l; i++) {
-        (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
+        (options[i].selected)? selectedOption.push({value:options[i].value,name:options[i].label,key:options[i].id}):unselectedOption.push({value:options[i].value,name:options[i].label,key:options[i].id})
        }
      this.setState({selectedOption:selectedOption,unselectedOption:unselectedOption});
     }
-    if(param=='REMOVE')  {
-      for (var i = 0, l = options.length; i < l; i++) {
-        (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
-        allAvailOptions.push({id:options[i].value,name:options[i].label})
-       }
-       this.setState({selectedOption:selectedOption,unselectedOption:unselectedOption});
-    }
-    
-  }
   
   dataSetsOption=(periodTypeVal)=>{
     this.setState({isdatasetloaded:true})
-    var dataSet=(this.props.updatedata.dataSets.map((item) => 
+    var dataSet=(this.props.updatedata.dataSets.map((item,index) => 
         (item.periodType == periodTypeVal)?
-                (<option value={item.id}>{item.name}</option>):false
+                (<option value={item.value} id={index}>{item.name}</option>):false
             ))
     this.props.availDataSetOption(dataSet,[])
 }
   
-  availDSOptions=()=>{
-    var unseldataSets,seldataSets=[],data=this.props.updatedata.selectedAvailDSOption
-    unseldataSets=this.props.updatedata.unselectedAvailDSOption.map((item) => 
-              <option value={item.id}>{item.name}</option>)
-    seldataSets=this.props.updatedata.selectedAvailDSOption.map((item) => 
-        <option value={item.id}>{item.name}</option>)
+  addAvailDSOptions=()=>{
+    var unseldataSets,seldataSets=[];
+    seldataSets=this.props.updatedata.selectedAvailDSOption.sort((a,b) => parseInt(a.key)-parseInt(b.key)) 
+    .map((item) => <option value={item.value} id={item.key} >{item.name}</option>)
+    unseldataSets=this.props.updatedata.unselectedAvailDSOption.sort((a,b) => parseInt(a.key)-parseInt(b.key))
+    .map((item) => <option value={item.value} id={item.key}>{item.name}</option>)
     
     this.props.availDataSetOption(unseldataSets,seldataSets)
-    this.setState({isloadedAvailDSAdd:false})
+    this.setState({isloadedAvailDSAdd:false,yes:this.props.updatedata.selectedAvailDSOption,no:this.props.updatedata.unselectedAvailDSOption})
     }
     
     removeavailDSOptions=()=>{
       var seldataSets,notseldataSets
-    seldataSets=(this.props.updatedata.unselectedAvailDSOption.map((item) => 
-            <option value={item.id}>{item.name}</option>))
-    notseldataSets=(this.props.updatedata.selectedAvailDSOption.map((item) => 
-            <option value={item.id}>{item.name}</option>))
-
+      seldataSets=this.props.updatedata.unselectedAvailDSOption.sort((a,b) => parseInt(a.key)-parseInt(b.key))
+      .map((item) => <option value={item.value} id={item.key}>{item.name}</option>)
+      notseldataSets=this.props.updatedata.selectedAvailDSOption.sort((a,b) => parseInt(a.key)-parseInt(b.key))
+      .map((item) =>  <option value={item.value} id={item.key}>{item.name}</option>)
+    
      this.props.availDataSetOption(seldataSets,notseldataSets)
-     this.setState({isloadedAvailDSRemove:false})
+     this.setState({isloadedAvailDSRemove:false,yes:this.props.updatedata.selectedAvailDSOption,no:this.props.updatedata.unselectedAvailDSOption})
     }
     
     handleClick(param) {
@@ -88,35 +80,48 @@ class AvailableDataSets extends React.Component {
       }
       
     }
-
+    filterFunction(param,e) {
+      var  filter, option,i;
+      filter = e.target.value.toUpperCase();
+      option = document.getElementById(param).options;
+      for (i = 0; i < option.length; i++) {
+          if (option[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            option[i].style.display = "";
+          } else {
+            option[i].style.display = "none";
+          }
+      }
+  }
 
   render() {
     if(this.props.Period!=null && this.state.isdatasetloaded==false)
      this.dataSetsOption(this.props.Period)
     if(this.state.isloadedAvailDSAdd==true)
-      this.availDSOptions()
+      this.addAvailDSOptions()
     if(this.state.isloadedAvailDSRemove==true)
       this.removeavailDSOptions()
      
                     
     return (
       <div>
-      <Panel className="leftPanel">
+      <Panel className="leftPanel" >
         <Panel.Heading >Available DataSets</Panel.Heading>
-        <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this,'ADD')}>ADD</Button>
-        <select multiple={true} className='form-control' onChange={(event)=>this.handleChange(event,'ADD')}>
+        {(this.props.Period!=null)?<input type="text" placeholder="Search.." id="input-box" onKeyUp={this.filterFunction.bind(this,'availDSDropdown')}></input>:false}
+        <Button bsStyle="primary" className='button'   onClick={this.handleClick.bind(this,'ADD')}>ADD</Button>
+        <select multiple={true} className='form-control' id="availDSDropdown" onChange={(event)=>this.handleChange(event)}>
           {this.props.updatedata.availdataSetsOption}
         </select>
       </Panel>
 
       <Panel className="rightPanel">
         <Panel.Heading >Selected DataSets</Panel.Heading>
+        {(this.props.Period!=null)?<input type="text" placeholder="Search.." id="input-box" onKeyUp={this.filterFunction.bind(this,'selDSDropdown')}></input>:false}
         <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this,'REMOVE')}>REMOVE</Button>
-              <select multiple className='form-control' onChange={(event)=>this.handleChange(event,'REMOVE')}>
+              <select multiple className='form-control' id="selDSDropdown" onChange={(event)=>this.handleChange(event)}>
                   {this.props.updatedata.selavaildataSetsOption}
               </select>
         </Panel>
-</div>
+    </div>
     )
     
   }
@@ -147,3 +152,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(AvailableDataSets)
 
 
  
+
+
+
+// WEBPACK FOOTER //
+// ./src/components/AvailableDataSets/index.js

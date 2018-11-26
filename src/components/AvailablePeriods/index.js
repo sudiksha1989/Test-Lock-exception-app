@@ -1,155 +1,171 @@
 import React from 'react';
-import {Panel,Button,DropdownButton,ButtonToolbar}  from 'react-bootstrap'
-import './style.css'
+import { Panel, Button, DropdownButton, ButtonToolbar } from 'react-bootstrap'
 import { connect } from 'react-redux';
-import { availPeriodOption,selectAvailPeriod ,setAvailPeriodVal} from '../actions/dataReducerAction';
-import {SelectedDropdown} from './SelectedDropdown'
+import { availPeriodOption, selectAvailPeriod, setAvailPeriodVal } from '../actions/dataReducerAction';
 
-class AvailablePeriods extends React.Component{
+class AvailablePeriods extends React.Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state={
-      isloadedAvailPeriodAdd:false,
-      isloadedAvailPeriodRemove:false,
-      isPeriodloaded:false,
-      availPeriodVal:null,
-      selectedOption:[],
-      unselectedOption:[],
-      month:['January','February','March','April','May','June','July','August','September','October','November','December']
-     }
+    this.state = {
+      isloadedAvailPeriodAdd: false,
+      isloadedAvailPeriodRemove: false,
+      isPeriodloaded: false,
+      availPeriodVal: null,
+      selectedOption: [],
+      unselectedOption: [],
+      periodTypeVal: null,
+      month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    }
   }
   componentWillReceiveProps(props) {
-    if(props.updatedata.availPeriodVal!==this.state.availPeriodVal)
-    this.setState({availPeriodVal:props.updatedata.availPeriodVal,isPeriodloaded:false})
-
+    if (props.Period !== this.state.periodTypeVal)
+      this.setState({ periodTypeVal: props.Period, isPeriodloaded: false })
   }
-  handleChange(e,param){
+  handleChange(e) {
     var options = e.target.options;
-    var allAvailOptions=[],selectedOption=[],unselectedOption=[];
-    if(param=='ADD')  {
-      for (var i = 0, l = options.length; i < l; i++) {
-        (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
-       }
-       this.setState({selectedOption:selectedOption,unselectedOption:unselectedOption});
-     }
-    if(param=='REMOVE')  {
-      for (var i = 0, l = options.length; i < l; i++) {
-        (options[i].selected)? selectedOption.push({id:options[i].value,name:options[i].label}):unselectedOption.push({id:options[i].value,name:options[i].label})
-        allAvailOptions.push({id:options[i].value,name:options[i].label})
-       }
-       this.setState({selectedOption:selectedOption,unselectedOption:unselectedOption});
+    var selectedOption = [], unselectedOption = [];
+    for (var i = 0, l = options.length; i < l; i++) {
+      (options[i].selected) ? selectedOption.push({ id: options[i].value, name: options[i].label, key: options[i].id }) : unselectedOption.push({ id: options[i].value, name: options[i].label, key: options[i].id })
     }
-    
-  }
-  
-  periodsOption=(event)=>{
-    this.setState({isPeriodloaded:true})
-    let date= new Date(),
-      currentYear=date.getFullYear(),
-      optionValue=[],
-      index=0,
-      year=event.availPeriodVal,
-      month=((currentYear==year)?date.getMonth():11);
+    this.setState({ selectedOption: selectedOption, unselectedOption: unselectedOption });
 
-      while(index!=month+1){
-        optionValue.push({value:year.toString()+index.toString(),month:this.state.month[index]+" "+year})
+  }
+
+  periodsOption = () => {
+    this.setState({ isPeriodloaded: true })
+    var month
+    let date = new Date(),
+      currentYear = date.getFullYear(),
+      optionValue = [],
+      index = 0;
+
+    while (currentYear > 2000) {
+      month = ((currentYear < 2000) ? date.getMonth() : 11);
+      while (index != month + 1) {
+        optionValue.push({ value: currentYear.toString() + index.toString(), month: this.state.month[index] + " " + currentYear })
         index++;
       }
-      var periods=(optionValue.map((item) =>(<option value={item.value}>{item.month}</option>)))
-      
-      this.props.availPeriodOption(periods,[])
+      index = 0
+      currentYear--;
+    }
 
+    var periods = (optionValue.map((item, index) => (<option value={item.value} id={index}>{item.month}</option>)))
+
+    this.props.availPeriodOption(periods, [])
+
+  }
+
+  addAvailPeriodOptions = () => {
+    var notselPeriods, selperiods = []
+    selperiods = this.props.updatedata.selectedAvailPeriodOption.sort((a, b) => parseInt(a.key) - parseInt(b.key))
+      .map((item) => <option value={item.id} id={item.key}>{item.name}</option>)
+    notselPeriods = this.props.updatedata.notselAvailPeriodOption.sort((a, b) => parseInt(a.key) - parseInt(b.key))
+      .map((item) => <option value={item.id} id={item.key}>{item.name}</option>)
+
+    this.props.availPeriodOption(notselPeriods, selperiods)
+    this.setState({ isloadedAvailPeriodAdd: false })
+  }
+
+  removeAvailPeriodOptions = () => {
+    var selperiods, notselPeriods
+    selperiods = this.props.updatedata.notselAvailPeriodOption.sort((a, b) => parseInt(a.key) - parseInt(b.key)).map((item) =>
+      <option value={item.id} id={item.key}>{item.name}</option>)
+    notselPeriods = this.props.updatedata.selectedAvailPeriodOption.sort((a, b) => parseInt(a.key) - parseInt(b.key))
+      .map((item) => <option value={item.id} id={item.key}>{item.name}</option>)
+
+
+    this.props.availPeriodOption(selperiods, notselPeriods)
+    this.setState({ isloadedAvailPeriodRemove: false })
+  }
+
+  handleClick(param) {
+    if (param == 'ADD') {
+      this.setState({ isloadedAvailPeriodAdd: true })
+      this.props.selectAvailPeriod(this.state.selectedOption, this.state.unselectedOption, false);
+    }
+
+    if (param == 'REMOVE') {
+      this.setState({ isloadedAvailPeriodRemove: true })
+      this.props.selectAvailPeriod(this.state.unselectedOption, this.state.selectedOption, true);
+    }
+
+  }
+  filterFunction(param, e) {
+    var filter, option, i;
+    filter = e.target.value.toUpperCase();
+    option = document.getElementById(param).options;
+    for (i = 0; i < option.length; i++) {
+      if (option[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+        option[i].style.display = "";
+      } else {
+        option[i].style.display = "none";
+      }
+    }
+  }
+
+  render() {
+    if (this.props.Period != null && this.state.isPeriodloaded == false)
+      this.periodsOption(this.props.updatedata.availPeriodVal)
+    if (this.state.isloadedAvailPeriodAdd == true)
+      this.addAvailPeriodOptions()
+    if (this.state.isloadedAvailPeriodRemove == true)
+      this.removeAvailPeriodOptions()
+    // <div>
+    // <Panel className="leftPanel">
+    //     <Panel.Heading >Available Periods</Panel.Heading>
+    //     {(this.props.Period!=null)?<input type="text" placeholder="Search.." id="input-box" onKeyUp={this.filterFunction.bind(this,'availPeriodDropdown')}></input>:false}
+    //      <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this,'ADD')}>ADD</Button>
+    //         <select multiple className='form-control' id='availPeriodDropdown' onChange={(event)=>this.handleChange(event,'ADD')}>
+    //             {this.props.updatedata.availPeriodOption}
+    //         </select>
+    //   </Panel>
+    //   <Panel className="rightPanel">
+    //   <Panel.Heading >Selected Periods</Panel.Heading>
+    //   {(this.props.Period!=null)?<input type="text" placeholder="Search.." id="input-box" onKeyUp={this.filterFunction.bind(this,'selPeriodDropdown')}></input>:false}
+    //  <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this,'REMOVE')}>REMOVE</Button>
+    //         <select multiple className='form-control' id='selPeriodDropdown' onChange={(event)=>this.handleChange(event,'REMOVE')}>
+    //           {this.props.updatedata.selAvailPeriodOption}
+    //         </select>
+    //   </Panel>
+    // </div>
+    return (
+      <div>
+        <div class="panel panel-default">
+          <div class="panel-heading">Available Periods</div>
+          <div class="panel-body">Panel Content</div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">Selected Periods</div>
+          <div class="panel-body">Panel Content</div>
+        </div>
+      </div>
+
+    )
+  }
 }
-  
-  addAvailPeriodOptions=()=>{
-    var unseldataSets,seldataSets=[]
-    unseldataSets=this.props.updatedata.notselAvailPeriodOption.map((item) => 
-              <option value={item.id}>{item.name}</option>)
-    seldataSets=this.props.updatedata.selectedAvailPeriodOption.map((item) => 
-        <option value={item.id}>{item.name}</option>)
-    this.props.availPeriodOption(unseldataSets,seldataSets)
-    this.setState({isloadedAvailPeriodAdd:false})
-    }
-    
-    removeAvailPeriodOptions=()=>{
-    var seldataSets,notseldataSets
-    seldataSets=(this.props.updatedata.notselAvailPeriodOption.map((item) => 
-            <option value={item.id}>{item.name}</option>))
-    notseldataSets=(this.props.updatedata.selectedAvailPeriodOption.map((item) => 
-            <option value={item.id}>{item.name}</option>))
 
-     this.props.availPeriodOption(seldataSets,notseldataSets)
-     this.setState({isloadedAvailPeriodRemove:false})
-    }
-    
-    handleClick(param) {
-      if(param=='ADD'){
-        this.setState({isloadedAvailPeriodAdd:true})
-        this.props.selectAvailPeriod(this.state.selectedOption,this.state.unselectedOption,false);
-      }
-      
-      if(param=='REMOVE'){
-        this.setState({isloadedAvailPeriodRemove:true})
-        this.props.selectAvailPeriod(this.state.selectedOption,this.state.unselectedOption,true);
-      }
-      
-    }
+const mapStateToProps = (state) => {
+  return {
+    updatedata: state.updatedata,
+  }
+}
 
-        
-        render(){
-          if(this.props.updatedata.availPeriodVal!=null && this.state.isPeriodloaded==false)
-          this.periodsOption(this.props.updatedata.availPeriodVal)
-          if(this.state.isloadedAvailPeriodAdd==true)
-            this.addAvailPeriodOptions()
-          if(this.state.isloadedAvailPeriodRemove==true)
-            this.removeAvailPeriodOptions()
-          
-      return(
-        <div>
-            <Panel className="leftPanel">
-                <Panel.Heading >Available Periods</Panel.Heading>
-                    {(this.props.Period=='Monthly')?
-                    <ButtonToolbar className="dropdown">
-                        <DropdownButton  onSelect={(value)=>this.props.setAvailPeriodVal(value)}
-                            title={'Select Periods'}>
-                            {SelectedDropdown(this.props)}
-                        </DropdownButton>
-                    </ButtonToolbar>  :false}
-                    <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this,'ADD')}>ADD</Button>
-                    <select multiple className='form-control' onChange={(event)=>this.handleChange(event,'ADD')}>
-                        {this.props.updatedata.availPeriodOption}
-                    </select>
-              </Panel>
-              <Panel className="rightPanel">
-              <Panel.Heading >Selected Periods</Panel.Heading>
-              <Button bsStyle="primary" className='button' onClick={this.handleClick.bind(this,'REMOVE')}>REMOVE</Button>
-                    <select multiple className='form-control' onChange={(event)=>this.handleChange(event,'REMOVE')}>
-                      {this.props.updatedata.selAvailPeriodOption}
-                    </select>
-              </Panel>
-            </div>
-          )
-          }
-        }
-
-  const mapStateToProps = (state) => {
-    return {
-      updatedata: state.updatedata,
+const mapDispatchToProps = (dispatch) => {
+  return {
+    availPeriodOption: (selPeriods, unselPeriods) => {
+      dispatch(availPeriodOption(selPeriods, unselPeriods))
+    },
+    setAvailPeriodVal: (availPeriodVal) => {
+      dispatch(setAvailPeriodVal(availPeriodVal))
+    },
+    selectAvailPeriod: (selectedOption, unselectedOption, isperiodloaded) => {
+      dispatch(selectAvailPeriod(selectedOption, unselectedOption, isperiodloaded))
     }
   }
-  
-  const mapDispatchToProps = (dispatch) => {
-    return {
-          availPeriodOption:(selPeriods,unselPeriods)=>{
-          dispatch(availPeriodOption(selPeriods,unselPeriods))
-          },
-          setAvailPeriodVal:(availPeriodVal)=>{
-          dispatch(setAvailPeriodVal(availPeriodVal))
-          },
-          selectAvailPeriod:(selectedOption,unselectedOption,isperiodloaded)=>{
-          dispatch(selectAvailPeriod(selectedOption,unselectedOption,isperiodloaded))
-      }
-    }
-  }
-  export default connect(mapStateToProps, mapDispatchToProps)(AvailablePeriods)
+}
+export default connect(mapStateToProps, mapDispatchToProps)(AvailablePeriods)
+
+
+// WEBPACK FOOTER //
+// ./src/components/AvailablePeriods/index.js

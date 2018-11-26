@@ -12,13 +12,17 @@ class App extends Component{
 
      render(){
         return (
-             <div className='LockException-display'>
+            <div className="display">
+            <div className='input-cart col s12 m10 push-m1 z-depth-2 grey lighten-5'>
              <table>
-             <tr><th><PeriodType/></th></tr>
-             <tr><th><AvailablePeriods   Period={this.props.updatedata.periodSelect}/></th></tr>
-             <tr><th><AvailableDataSets  Period={this.props.updatedata.periodSelect}/></th></tr>
-             <tr> <th><ViewTree/></th></tr>
+                 <thead><tr><th><PeriodType/></th></tr></thead>
+                 <tbody>
+                 <tr><th><AvailablePeriods   Period={this.props.updatedata.periodSelect}/></th></tr>
+                    <tr><td>hello</td></tr>
+                    <tr><td>hello</td></tr>
+                </tbody>
              </table>
+             </div>
              </div>
              
          )
